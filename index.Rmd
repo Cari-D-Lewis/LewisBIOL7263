@@ -5,5 +5,5 @@ date: "`r Sys.Date()`"
 output: html_document
 ---
 
-[Assignment1](Assignments/Assignment1.Rmd)
+[Assignment1](Assignments/Assignment1.html)
 
