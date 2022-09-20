@@ -1,0 +1,232 @@
+---
+title: "Assignment3"
+author: "Cari Lewis"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    theme: yeti
+    highlight: tango
+    df_print: tibble
+---
+## 1. Convert a pdf into csv  
+#### pdf data:  
+  
+```
+Candidate Choice    Absentee Mail   Early Voting    Election Day    Total Votes
+TODD RUSS   7,021   8,194   135,216   150,431
+CLARK JOLLEY    7,012   5,835   107,714   120,561
+```
+  
+#### Regular expression to find the double spaces and change them to commas:
+```
+# find the double spaces
+\s+\s
+
+# replace the double spaces with a comma space
+,\s
+```
+  
+#### .csv file:
+```
+Candidate Choice, Absentee Mail, Early Voting, Election Day, Total Votes
+TODD RUSS, 7,021, 8,194, 135,216, 150,431
+CLARK JOLLEY, 7,012, 5,835, 107,714, 120,561
+```
+  
+  
+## 2. Reformat the class roster  
+#### class roster:
+  
+```  
+Adamic, Emily M.    ema3896@utulsa.edu
+Bierbaum, Emily L.  elb0588@utulsa.edu
+Cartmell, Laci J.   ljc454@utulsa.edu
+Delaporte, Elise    eld0070@utulsa.edu
+Hansen, Rebekah E.  reh9623@utulsa.edu
+Herrboldt, Madison A.   mah1626@utulsa.edu
+Lewis, Cari D.  cdl5261@utulsa.edu
+Mierow, Tanner T.   ttm5619@utulsa.edu
+Naranjo, Daniel S.  dsn8679@utulsa.edu
+Paslay, Caleb   cap1050@utulsa.edu
+Pletcher, Olivia M. omp9336@utulsa.edu
+West, Amy C.    acw1471@utulsa.edu
+```  
+  
+#### Regular expression to reformat as: Firstname Lastname (Email)  
+  
+```
+# (first name)+(comma space)+(last name)+(space middle initial period space)+(email)
+(\w{1,})+(,\s)+(\w+)+(\s\w*.\s+)+(\w+.\w+.\w+)
+
+# first name last name (email)
+\1 \3 (\5)
+```
+  
+#### Reformatted class roster:  
+  
+```
+Adamic Emily (ema3896@utulsa.edu)
+Bierbaum Emily (elb0588@utulsa.edu)
+Cartmell Laci (ljc454@utulsa.edu)
+Delaporte Elise (eld0070@utulsa.edu)
+Hansen Rebekah (reh9623@utulsa.edu)
+Herrboldt Madison (mah1626@utulsa.edu)
+Lewis Cari (cdl5261@utulsa.edu)
+Mierow Tanner (ttm5619@utulsa.edu)
+Naranjo Daniel (dsn8679@utulsa.edu)
+Paslay Caleb (cap1050@utulsa.edu)
+Pletcher Olivia (omp9336@utulsa.edu)
+West Amy (acw1471@utulsa.edu)
+```
+  
+## 3. Remove the genus and species names from a dataset  
+#### Dataset:  
+  
+```
+Banded sculpin, Cottus carolinae, 5
+Redspot chub, Nocomis asper, 5
+Northern hog sucker, Hypentelium nigricans, 6
+Creek chub, Semotilus atromaculatus, 8
+Stippled darter, Etheostoma punctulatum, 9
+Smallmouth bass, Micropterus dolomieu, 10
+Logperch, Percina caprodes, 13
+Slender madtom, Noturus exilis, 14
+```
+  
+#### Regular expression to remove genus and species:  
+  
+```
+# (common name)+comma space+(genus species)+comma space+(number)
+(\w+\s*\w+\s*\w+)+,\s+(\w+\s*\w+)+,\s+(\w+)
+
+# common name, number
+\1, \3
+```
+  
+#### New dataset:  
+  
+```
+Banded sculpin, 5
+Redspot chub, 5
+Northern hog sucker, 6
+Creek chub, 8
+Stippled darter, 9
+Smallmouth bass, 10
+Logperch, 13
+Slender madtom, 14
+```
+  
+## 4. Reformat the dataset as Common Name, G_species, Number  
+  
+#### Regular expression:  
+  
+```
+# (common name)+comma space+(G)enus+one or more spaces(species)+comma space+(number)
+(\w+\s*\w+\s*\w+)+,\s+(\w)\w+\s*(\w+)+,\s+(\w+)
+
+# common name, G_species, number
+\1, \2_\3, \4
+```
+  
+#### Reformatted dataset:  
+  
+```
+Banded sculpin, C_carolinae, 5
+Redspot chub, N_asper, 5
+Northern hog sucker, H_nigricans, 6
+Creek chub, S_atromaculatus, 8
+Stippled darter, E_punctulatum, 9
+Smallmouth bass, M_dolomieu, 10
+Logperch, P_caprodes, 13
+Slender madtom, N_exilis, 14
+```
+  
+## 5. Abbreviate the genus and species as G_spe.  
+  
+#### Regular expression:  
+  
+```
+# (common name)+comma space+(G)enus+one or more spaces(spe)cies+comma space+(number)
+(\w+\s*\w+\s*\w+)+,\s+(\w)\w+\s*(\w{3})\w+,\s+(\w+)
+
+# common name, G_spe., number
+\1, \2_\3., \4
+```
+  
+#### Reformatted Genus and species:  
+  
+```
+Banded sculpin, C_car., 5
+Redspot chub, N_asp., 5
+Northern hog sucker, H_nig., 6
+Creek chub, S_atr., 8
+Stippled darter, E_pun., 9
+Smallmouth bass, M_dol., 10
+Logperch, P_cap., 13
+Slender madtom, N_exi., 14
+```
+  
+## 6. Using the *Cimex lectularius* genome (6.1) and mitogenome (6.2), complete the following:  
+#### 6.1 Create a new file that contains only fasta headers:  
+  
+#### Commands:  
+  
+```
+# pull all the lines that contain ">" and write it to a new file "fasta_headers_Clec.txt"
+grep '>' C_lec.fna > fasta_headers_Clec.txt
+```
+  
+#### Head of the new file:  
+  
+```
+# print the top 10 lines of the new file to the standard output
+head fasta_headers_Clec.txt             
+
+>NM_001316700.2 Cimex lectularius apyrase (LOC106669828), mRNA
+>NM_001316702.1 Cimex lectularius NADPH--cytochrome P450 reductase (LOC106668336), mRNA
+>NM_001316703.1 Cimex lectularius sodium channel protein para (LOC106667833), mRNA
+>NM_001316704.1 Cimex lectularius 72 kDa inositol polyphosphate 5-phosphatase-like (LOC106662976), mRNA
+>NM_001316705.1 Cimex lectularius acetylcholinesterase-like (LOC106669386), mRNA
+>NM_001316706.1 Cimex lectularius acetylcholinesterase-like (LOC106664272), mRNA
+>NM_001316707.1 Cimex lectularius acetylcholinesterase-like (LOC106669436), mRNA
+>NM_001316708.1 Cimex lectularius odorant receptor coreceptor (LOC106665376), mRNA
+>NM_001316709.1 Cimex lectularius probable cytochrome P450 6d5 (LOC106673892), mRNA
+>XM_014383668.2 PREDICTED: Cimex lectularius uncharacterized LOC106674453 (LOC106674453), mRNA
+```
+  
+#### 6.2 Create a new file that contains the full sequences of only the ribosomal transcripts or proteins:  
+  
+#### Commands:  
+  
+```
+# insert a new line inbetween the transcripts | pull out the ribosomal headers and transcripts
+sed -e 's/>/ \n>/g' C_lec.fna | sed -n '/ribosom/,/^ /p' > RNA_Clec.txt
+```
+  
+#### Head of the new file:  
+  
+```
+# list the top 20 lines of the Ribosomal RNA file
+head -20 RNA_Clec.txt 
+
+>XM_014383747.2 PREDICTED: Cimex lectularius 60S ribosomal protein L22-like (LOC106660802), mRNA
+CGGTAAATTTGGTGAAAAGTTTTAGCTGTACTTTTGTTTTTAAACAGAATAAGTTGATTTCCTCTCAGGTAGTTTAGTGA
+TTAATGGAAAAATGCAGAGCATTTATATTTTAAAAGCTACTTGAAATAAAAATAAAGTATAAATGATGATTAAGTCATCG
+ACGAAGTAGGTCAACGTGTGTTCACCTTCCTTCTAACCTTTTTAGATCGCCCATTTTGTGATCCACGCGTTTCTATCAGT
+TCGTGCGGACTTTTGTTTTTTTTTACCATGGCACCTGCAAAGAAACCTGGTGCCGCTGCAAAAAAGACACCGACGACAAC
+AGTCACTTCTGCGAAAGTAGGAAAGACGGCTGCCAAACCAACGGGAGGTGCGACGGCAGCGAAATCGGCCCCTGCCCCGG
+CTGCCAAACCTGCCCCTGCGAAACAGGCGACGGCGAAGCCTGCACAGCAGAAGCAGACGACGAAGCAGCCTCAGGCAGCG
+ACCAAAGCCGCCGCTCCTGCTGCGAAGCAGGTGACGGCGCAGTCTAAAGCTGCACCTGCACCGAAGGCGCCTGCGGCAGC
+CAGTAAACCCGCTGCTCAGACAAAGCCGGCTCCGGCTGCACAAAAACCCACGACAGCTCCGGCTGCTAAGAAACCAGCGG
+CAGCCCCAGCACAGAGTGGCGCTTTGAAAAAAGCCGTTCAGCCTAAAAAGGCACTAGGTGCTTCGAAAAAACCACACCAA
+GGTGTGAAGAAACAAACTCTTAAAGGGAAAGGACAAAAGAAAAAGAAGGTCTCTTTAAAGTTTGTTATCGATTGTACACA
+TCCGTATGAAGATAAAATCATTGATGTTGCTAACTTTGAAAAGTATCTTCAGGAAAGAATAAAAGTGAATGGAAAAACCA
+ACAATTTTGGAAACAACCTTCAGCTAGAGAGAAATAAGATGAAAATTATTGTAACATCAGATATTCACATGTCTAAAAGA
+TATTTGAAGTATCTCACGAAAAAGTATCTGAAAAAAAATAACCTCCGAGATTGGCTTAGAGTTGTTGCAAGTTCTAAAGA
+CACCTATGAACTTAGGTACTTCCAGTTCAACAGCCAAGAAGATGAAGATGATGAGGATAATGATTGAAATCATTGCTTTT
+AAAATATGATATTTTGTAAATTCTTTGTAACCAAAAGTTTACAAAACAGTTGTAA
+ 
+>XM_014383760.2 PREDICTED: Cimex lectularius 50S ribosomal protein L1 (LOC106660813), mRNA
+TACAAAATATCTTAAATTCTTCAAAGGTCGTTCTACTGAGTACTTGGTCGCAACTCTGTATTGGGAGGTTTCCCTTTCAA
+AGTACGATCATGGACTTATCCAGAACAGCTTTCACATTGCTAAGTAGGCCTTGGTCTATTTACCAGAGAGCAGTCCAGTT
+```

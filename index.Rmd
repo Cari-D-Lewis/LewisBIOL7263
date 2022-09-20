@@ -14,8 +14,10 @@ output:
 #### Bachelor of Science in Entomology | Oklahoma State University | May 2018
 #### Associate of Science in Horticulture | Tulsa Community College | May 2016
 
-# **Research Interests**
-My expertise is in urban ecology and evolution in indoor urban pests. I currently use bed bugs (*Cimex lectularius*) as a model organism to study parasite-host relationships at multiple geographic scales. As a species with a close-association to us---humans---they provide a unique opportunity to study how host organisms impact parasite ecology and evolution with an applied importance to human health and well-being.
+# **Research Interests**  
+![](Assignments/ASP1-F1_Bed_Bug.jpg)
+  
+My expertise is in urban ecology and evolution in indoor urban pests. I currently use bed bugs (*Cimex lectularius*) as a model organism to study parasite-host relationships at multiple geographic scales. As a species with a close-association to us---humans---they provide a unique opportunity to study how host organisms impact parasite ecology and evolution with an applied importance to human health and well-being. I'm completing my Ph.D. in the [Booth Lab](https://www.booth-lab.org) and currently looking for a post-doc or industry position in Computational Genetics or related fields.
 
 # **BIOL7263 Assignments**
 
@@ -23,5 +25,6 @@ My expertise is in urban ecology and evolution in indoor urban pests. I currentl
 | :---: | :---: | :---  
 | Assignment 1 | [Assignment1](Assignments/Assignment1.html) | Introduction to GitHub  
 | Assignment 2 | [Assignment2](index.html) | R Markdown, Portfolio Building  
+| Assignment 3 | [Assignment3](Assignments/Assignment3.html) | Regular Expressions
 
 
