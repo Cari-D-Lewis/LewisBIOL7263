@@ -606,6 +606,59 @@ Blackbirds?</h3>
 Calculate the mean rate per checklist that I encounter species each
 year. Specifically, calculate the number of species in each checklist
 divided by duration and then take the mean for the year.</h3>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create a new dataset by filtering observations for duration between 5-200 minutes</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>Matt_ebird_duration <span class="ot">&lt;-</span> <span class="fu">filter</span>(Matt_ebird, duration <span class="sc">&gt;</span> <span class="dv">5</span> <span class="sc">&amp;</span> duration <span class="sc">&lt;</span> <span class="dv">200</span>)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co"># group by species</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>Matt_ebird_duration <span class="ot">&lt;-</span> <span class="fu">group_by</span>(Matt_ebird_duration, scientific_name)</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co"># create a new variable count for each species</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>Matt_ebird_duration <span class="ot">&lt;-</span> <span class="fu">mutate</span>(Matt_ebird_duration, <span class="at">species_num=</span><span class="fu">n</span>())</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="co"># ungroup by species and regroup by year</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="fu">ungroup</span>(Matt_ebird_duration)</span></code></pre></div>
+<pre><code>## # A tibble: 5,824 × 15
+##     ...1 list_ID  commo…¹ scien…² date       time  count durat…³ locat…⁴ latit…⁵
+##    &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;   &lt;chr&gt;   &lt;date&gt;     &lt;tim&gt; &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt;
+##  1     1 S407487… Snow G… Anser … 2017-11-26 10:28    16      20 US-MO      38.9
+##  2     2 S336166… Snow G… Anser … 2017-01-12 07:00     1      90 US-MO      38.6
+##  3     3 S338098… Snow G… Anser … 2017-01-20 16:26     1      59 US-MO      38.6
+##  4     4 S355339… Snow G… Anser … 2017-03-30 07:05     1     100 US-MO      38.6
+##  5     5 S356980… Snow G… Anser … 2017-04-04 07:00     1     127 US-MO      38.6
+##  6     6 S358612… Snow G… Anser … 2017-04-10 18:06     1      68 US-MO      38.6
+##  7     7 S359184… Snow G… Anser … 2017-04-13 06:59     1     109 US-MO      38.6
+##  8     8 S361181… Snow G… Anser … 2017-04-20 07:00     1      98 US-MO      38.6
+##  9     9 S361989… Snow G… Anser … 2017-04-23 08:13     1     173 US-MO      38.6
+## 10    10 S368405… Snow G… Anser … 2017-05-13 18:00     1      45 US-MO      38.6
+## # … with 5,814 more rows, 5 more variables: longitude &lt;dbl&gt;, count_tot &lt;dbl&gt;,
+## #   month &lt;dbl&gt;, year &lt;dbl&gt;, species_num &lt;int&gt;, and abbreviated variable names
+## #   ¹​common_name, ²​scientific_name, ³​duration, ⁴​location, ⁵​latitude
+## # ℹ Use `print(n = ...)` to see more rows, and `colnames()` to see all variable names</code></pre>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>Matt_ebird_duration <span class="ot">&lt;-</span> <span class="fu">group_by</span>(Matt_ebird_duration, list_ID)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co">#summary(Matt_ebird_duration, species=count(scientific_name))</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co"># create a new variable </span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(Matt_ebird_duration)</span></code></pre></div>
+<pre><code>## Rows: 5,824
+## Columns: 15
+## Groups: list_ID [353]
+## $ ...1            &lt;dbl&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15, 16, 17,…
+## $ list_ID         &lt;chr&gt; &quot;S40748758&quot;, &quot;S33616660&quot;, &quot;S33809874&quot;, &quot;S35533959&quot;, &quot;S…
+## $ common_name     &lt;chr&gt; &quot;Snow Goose&quot;, &quot;Snow Goose&quot;, &quot;Snow Goose&quot;, &quot;Snow Goose&quot;…
+## $ scientific_name &lt;chr&gt; &quot;Anser caerulescens&quot;, &quot;Anser caerulescens&quot;, &quot;Anser cae…
+## $ date            &lt;date&gt; 2017-11-26, 2017-01-12, 2017-01-20, 2017-03-30, 2017-…
+## $ time            &lt;time&gt; 10:28:00, 07:00:00, 16:26:00, 07:05:00, 07:00:00, 18:…
+## $ count           &lt;dbl&gt; 16, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 30, 6, 31, 6, …
+## $ duration        &lt;dbl&gt; 20, 90, 59, 100, 127, 68, 109, 98, 173, 45, 118, 85, 1…
+## $ location        &lt;chr&gt; &quot;US-MO&quot;, &quot;US-MO&quot;, &quot;US-MO&quot;, &quot;US-MO&quot;, &quot;US-MO&quot;, &quot;US-MO&quot;, …
+## $ latitude        &lt;dbl&gt; 38.87193, 38.63891, 38.63891, 38.63891, 38.63891, 38.6…
+## $ longitude       &lt;dbl&gt; -90.18439, -90.28538, -90.28538, -90.28538, -90.28538,…
+## $ count_tot       &lt;dbl&gt; 369, 272, 188, 283, 369, 28, 247, 237, 137, 114, 108, …
+## $ month           &lt;dbl&gt; 11, 1, 1, 3, 4, 4, 4, 4, 4, 5, 6, 8, 1, 12, 11, 11, 3,…
+## $ year            &lt;dbl&gt; 2017, 2017, 2017, 2017, 2017, 2017, 2017, 2017, 2017, …
+## $ species_num     &lt;int&gt; 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 4,…</code></pre>
 </div>
 <div id="create-a-tibble-that-includes-the-complete-observations-for-the-top-10-most-frequently-observed-species.-first-generate-a-top-10-list-and-then-use-this-list-to-filter-all-observations.-export-this-tibble-as-a-.csv-file-saved-to-a-folder-called-results-folder-within-your-r-project-and-add-link-to-the-markdown-document." class="section level3">
 <h3>5. Create a tibble that includes the complete observations for the

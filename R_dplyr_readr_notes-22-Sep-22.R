@@ -153,7 +153,7 @@ Matt_ebird <- read_csv("Desktop/Dissertation/Bioinformatics/Data_Wrangling/Lewis
 
 # can also download from the website, dependingn on how accessible the file is
 # DONT HAVE TO DO BOTH
-Matt_ebird, read_csv("https://github.com/mbtoomey/Biol_7263/blob/main/Data/MBT_ebird.csv?raw=true")
+Matt_ebird <- read_csv("https://github.com/mbtoomey/Biol_7263/blob/main/Data/MBT_ebird.csv?raw=true")
 
 # Toomey prefers to save data as .csv files; there are other formats and read
 # functions available, see notes online

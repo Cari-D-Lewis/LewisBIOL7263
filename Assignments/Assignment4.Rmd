@@ -68,6 +68,26 @@ summarize(Matt_ebird_RWBB, state_total=sum(count_tot))
 ## *The most Red-winged Blackbirds were observed in `r slice_max(summarize(Matt_ebird_RWBB, state_total=sum(count_tot), na.rm=TRUE), state_total)[1]`.*
 ### 4. Filter observations for a duration between 5 and 200 minutes. Calculate the mean rate per checklist that I encounter species each year. Specifically, calculate the number of species in each checklist divided by duration and then take the mean for the year.  
   
+```{r}
+# create a new dataset by filtering observations for duration between 5-200 minutes
+Matt_ebird_duration <- filter(Matt_ebird, duration > 5 & duration < 200)
+
+# group by species
+Matt_ebird_duration <- group_by(Matt_ebird_duration, scientific_name)
+
+# create a new variable count for each species
+Matt_ebird_duration <- mutate(Matt_ebird_duration, species_num=n())
+
+# ungroup by species and regroup by year
+ungroup(Matt_ebird_duration)
+Matt_ebird_duration <- group_by(Matt_ebird_duration, list_ID)
+
+
+#summary(Matt_ebird_duration, species=count(scientific_name))
+# create a new variable 
+
+glimpse(Matt_ebird_duration)
+```
 
 ### 5. Create a tibble that includes the complete observations for the top 10 most frequently observed species. First generate a top 10 list and then use this list to filter all observations. Export this tibble as a `.csv` file saved to a folder called “Results” folder within your R project and add link to the markdown document.  
   
