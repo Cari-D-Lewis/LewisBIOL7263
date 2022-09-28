@@ -1,0 +1,73 @@
+---
+title: "Assignment4"
+author: "Cari Lewis"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    theme: yeti
+    highlight: tango
+    df_print: tibble
+---
+  
+### Load the required packages, download the data, and import it into the `R` environment.  
+  
+```{R}
+# load tidyverse
+library(tidyverse)
+
+# download and import the data
+Matt_ebird <- read_csv("https://github.com/mbtoomey/Biol_7263/blob/main/Data/MBT_ebird.csv?raw=true")
+
+# view the headers
+glimpse(Matt_ebird)
+```
+
+### 1. In which year did I observe the most individual birds? How many?  
+  
+```{R}
+# create a group by year
+Matt_ebird <- group_by(Matt_ebird, year)
+
+# summarize the 'count_tot' variable by year groups
+summarize(Matt_ebird, max_bird=max(count_tot, na.rm = TRUE))
+```
+
+## *In `r slice_max(summarize(Matt_ebird, max_bird=max(count_tot, na.rm=TRUE)), max_bird)` birds were recorded.*
+
+### 2. In that year how many different species of birds did I observe?  
+  
+```{R}
+# ungroup by year
+ungroup(Matt_ebird)
+
+# pull out all 2020 data
+Matt_ebird_2020 <- filter(Matt_ebird, year == "2020")
+
+# group by species
+Matt_ebird_2020 <- group_by(Matt_ebird_2020, scientific_name)
+
+# print the dimensions of the table produced from summarizing by scientific name
+dim(summarize(Matt_ebird_2020))
+```
+  
+## *There are `r dim(summarize(Matt_ebird_2020))[1]` species recorded for 2020.*
+  
+### 3. In which state did I most frequently observe Red-winged Blackbirds?  
+  
+```{R}
+# pull out all Red-winged blackbird observations
+Matt_ebird_RWBB <- filter(Matt_ebird, common_name == "Red-winged Blackbird")
+
+# group by location
+Matt_ebird_RWBB <-group_by(Matt_ebird_RWBB, location)
+
+# summarize the data by location
+summarize(Matt_ebird_RWBB, state_total=sum(count_tot))
+```
+  
+## *The most Red-winged Blackbirds were observed in `r slice_max(summarize(Matt_ebird_RWBB, state_total=sum(count_tot), na.rm=TRUE), state_total)[1]`.*
+### 4. Filter observations for a duration between 5 and 200 minutes. Calculate the mean rate per checklist that I encounter species each year. Specifically, calculate the number of species in each checklist divided by duration and then take the mean for the year.  
+  
+
+### 5. Create a tibble that includes the complete observations for the top 10 most frequently observed species. First generate a top 10 list and then use this list to filter all observations. Export this tibble as a `.csv` file saved to a folder called “Results” folder within your R project and add link to the markdown document.  
+  
