@@ -32,7 +32,7 @@ Matt_ebird <- group_by(Matt_ebird, year)
 summarize(Matt_ebird, max_bird=max(count_tot, na.rm = TRUE))
 ```
 
-## *In `r slice_max(summarize(Matt_ebird, max_bird=max(count_tot, na.rm=TRUE)), max_bird)` birds were recorded.*
+## *In `r slice_max(summarize(Matt_ebird, max_bird=max(count_tot, na.rm=TRUE)), max_bird)` birds were recorded.*  
 
 ### 2. In that year how many different species of birds did I observe?  
   
@@ -50,7 +50,7 @@ Matt_ebird_2020 <- group_by(Matt_ebird_2020, scientific_name)
 dim(summarize(Matt_ebird_2020))
 ```
   
-## *There are `r dim(summarize(Matt_ebird_2020))[1]` species recorded for 2020.*
+## *There are `r dim(summarize(Matt_ebird_2020))[1]` species recorded for 2020.*  
   
 ### 3. In which state did I most frequently observe Red-winged Blackbirds?  
   
@@ -62,10 +62,11 @@ Matt_ebird_RWBB <- filter(Matt_ebird, common_name == "Red-winged Blackbird")
 Matt_ebird_RWBB <-group_by(Matt_ebird_RWBB, location)
 
 # summarize the data by location
-summarize(Matt_ebird_RWBB, state_total=sum(count_tot))
+summarise(Matt_ebird_RWBB, state_total=sum(count_tot))
 ```
   
-## *The most Red-winged Blackbirds were observed in `r slice_max(summarize(Matt_ebird_RWBB, state_total=sum(count_tot), na.rm=TRUE), state_total)[1]`.*
+## *The most Red-winged Blackbirds were observed in `r slice_max(summarize(Matt_ebird_RWBB, state_total=sum(count_tot), na.rm=TRUE), state_total)[1]`.*  
+  
 ### 4. Filter observations for a duration between 5 and 200 minutes. Calculate the mean rate per checklist that I encounter species each year. Specifically, calculate the number of species in each checklist divided by duration and then take the mean for the year.  
   
 ```{r}
@@ -73,21 +74,40 @@ summarize(Matt_ebird_RWBB, state_total=sum(count_tot))
 Matt_ebird_duration <- filter(Matt_ebird, duration > 5 & duration < 200)
 
 # group by species
-Matt_ebird_duration <- group_by(Matt_ebird_duration, scientific_name)
-
-# create a new variable count for each species
-Matt_ebird_duration <- mutate(Matt_ebird_duration, species_num=n())
-
-# ungroup by species and regroup by year
-ungroup(Matt_ebird_duration)
 Matt_ebird_duration <- group_by(Matt_ebird_duration, list_ID)
 
+# create a new variable `rate` for each list_ID
+Matt_ebird_duration <- mutate(Matt_ebird_duration, rate=(count/duration))
 
-#summary(Matt_ebird_duration, species=count(scientific_name))
-# create a new variable 
-
-glimpse(Matt_ebird_duration)
+# calculate the mean rate for each list_ID
+summarise(Matt_ebird_duration, mean_rate=mean(rate))
 ```
 
 ### 5. Create a tibble that includes the complete observations for the top 10 most frequently observed species. First generate a top 10 list and then use this list to filter all observations. Export this tibble as a `.csv` file saved to a folder called “Results” folder within your R project and add link to the markdown document.  
+  
+```{R}
+# group by species
+Matt_ebird <- group_by(Matt_ebird, scientific_name)
+
+# create a top 10 list
+ebird_top_10 <- head(arrange(summarise(Matt_ebird, freq=sum(count)), by = desc(freq)),10)
+
+# filter the original dataset using the top 10 list
+write_csv(filter(Matt_ebird, 
+                 scientific_name == ebird_top_10[1,1] &
+                   scientific_name == ebird_top_10[2,1] &
+                   scientific_name == ebird_top_10[3,1] &
+                   scientific_name == ebird_top_10[4,1] &
+                   scientific_name == ebird_top_10[5,1] &
+                   scientific_name == ebird_top_10[6,1] &
+                   scientific_name == ebird_top_10[7,1] &
+                   scientific_name == ebird_top_10[8,1] &
+                   scientific_name == ebird_top_10[9,1] &
+                   scientific_name == ebird_top_10[10,1]),
+          "ebird_top10.csv")
+
+# 
+
+```
+  
   

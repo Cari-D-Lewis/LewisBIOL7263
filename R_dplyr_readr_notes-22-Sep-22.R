@@ -303,3 +303,157 @@ starwars_cut1 %>%
 
 ## NOTE: can group by whatever variable FIRST to then add the count variable
 ## Example: can group by hair color, which will then create a count based on hair color
+
+################################################################################
+##### 29-Sep-22 Tidying Data using pivot #####
+# variables are in columns; observations are in rows; values are in each cell
+# using the relig_income sample dataset, demonstrate the different components of pivot
+
+require(tidyverse)
+
+##### using pivot_longer
+# open the dataset
+relig_income
+
+# create a new table with pivot where each row is a single observation
+## multiple examples of how to do the same thing
+relig_income %>% pivot_longer(cols=c("<$10k", "$10-20k", "$20-30k", "$30-40k", "$40-50k", "$50-75k", "$75-100k", "$100-150k", ">150k", "Don't know/refused"), names_to="income", values_to="count")
+
+# can simplify by just typing the range of income variables
+relig_income %>% pivot_longer(cols="<$10k":"Don't know/refused", names_to="income", values_to="count")
+
+# can further simplify by typing the "not religion" column
+relig_income_tidy <- relig_income %>% pivot_longer(cols= !religion, names_to="income", values_to="count")
+
+# using a new dataset, use pivot to move all the week columns
+billboard
+
+# make each row an observation
+billboard %>% pivot_longer(cols=starts_with("wk"), 
+                           names_to="week", 
+                           values_to="rank", 
+                           values_drop_na=TRUE)
+
+# make week a numeric variable
+billboard %>% pivot_longer(cols=starts_with("wk"), 
+                           names_to="week", 
+                           names_prefix ="wk", # drop the given prefix
+                           names_transform = list(week = as.integer()), # transform week variable into an integer
+                           values_to="rank", 
+                           values_drop_na=TRUE) %>%
+  arrange(rank, desc(week))
+
+## NOTE: the column "list" has to be presentd as a list to the names_transform function
+
+# dealing with multiple variables in the column names
+# use the world health organization dataset
+who
+
+# make this a more intuitive dataset to work with where a single observation is in each line
+who %>% pivot_longer(cols = new_sp_m014:newrel_f65,
+                     names_to= c("diagnosis","gender", "age"),
+                     names_pattern = "new_?(.*)_(.)(.*)",
+                     values_to = "count")
+
+# the ? in new_? says the _ may or may not be there in the pattern recognition
+# things are captured between the ()
+
+# multiple observations in each column that we want to combine together
+# make the new dataset with the following code:
+family <- tribble(
+  ~family,  ~dob_child1,  ~dob_child2, ~gender_child1, ~gender_child2,
+  1L, "1998-11-26", "2000-01-29",             1L,             2L,
+  2L, "1996-06-22",           NA,             2L,             NA,
+  3L, "2002-07-11", "2004-04-05",             2L,             2L,
+  4L, "2004-10-10", "2009-08-27",             1L,             1L,
+  5L, "2000-12-05", "2005-02-28",             2L,             1L,
+)
+
+# mutate the dataset to format it
+family <- family %>% mutate_at(vars(starts_with("dob")), parse_date)
+
+# combine the data for child1 and child2
+family %>%
+  pivot_longer(cols = !family, # every column that's not the family column
+               names_to = c( ".value", "child"), # .value refers to the first part ("dob") of the name
+               names_sep = "_", # seperater for DOB and name
+               values_drop_na = TRUE) # drops the missing data
+
+##### using pivot_wider
+table2
+
+table2 %>%
+  pivot_wider(names_from = type, # use names_from to pull names from a character list
+              values_from = count) ## NOTE: variable names are not in "" becuase they're existing variables
+
+##### using separate
+# separating variables
+table3
+
+table3 %>%
+  separate(rate, into = c("class","population")) # don't have to specify the separator; use regular expressions
+
+# split by a number of characters
+table3 %>%
+  separate(rate, into = c("class","population"), 
+           sep = 5) # specify the number of characters to split
+
+# data and notes mixed together in cells can be split apart
+# use the provided dataset:
+field_notes<-tibble(
+  ID = c(023, 456, 167, 897), 
+  sex = c("F","F","M","F"),
+  mass = c("15.6 first sample of the day","16.0","17.2 caught with female 456","14.9 last sample of the day"))
+
+# separate the data from the notes
+field_notes_sep <- field_notes %>%
+  separate(mass,
+           into = c("mass", "notes"),
+           sep =  " ",
+           extra = "merge", # merge option will merge the "stuff" after the first "space" separator
+           convert = TRUE) # convert will treat a decimal as a numeric
+
+## NOTE: using a space (" ") as the separator, it will separate at the first space
+
+##### using unite
+# uniting columns
+field_notes_sep %>%
+  unite(col = "ID_sex", ID, sex) # by default will use a "_" to separate the two combined variables
+
+## NOTE: can specify an empty sep = "" to not use an "_"
+## NOTE: can use the remove = FALSE option to NOT removed the individual variables that are combined
+
+field_notes_sep %>%
+  unite(col = "ID_sex", ID, sex,
+        sep = "$",
+        remove = FALSE)
+
+##### merging and comparing datasets
+# see online notes for options in mutating joins and all the options
+# use the band_members and band_instruments datasets to demonstrate merge
+require(tidyverse)
+
+band_members
+
+band_instruments
+
+# inner join
+band_members %>%
+  inner_join(band_instruments, by = "name") # will only join by a common field
+
+# full join
+band_members %>%
+  full_join(band_instruments, by = "name") # will join using a common field, and sub with NAs elsewhere
+
+# using band_instruments2, can combine using two different column names
+band_members %>%
+  full_join(band_instruments2, by = c("name" = "artist"))
+
+## NOTE: can use the keep = TRUE option to keep the original columns in the joined dataset
+
+# filter joins to select data in one dataset based on another
+band_mambers %>%
+  semi_join(band_instruments, by = "name")
+
+band_members %>%
+  anti_join()
