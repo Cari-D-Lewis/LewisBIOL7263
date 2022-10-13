@@ -308,3 +308,126 @@ m1 <- ggplot(data=mpg) +
   geom_point()
 
 m1 + facet_grid(.~class)
+
+##### 13-Oct-22 Lecture - Beyond Bar Graphs (paper) & Inkscape #####
+# required to read a paper before class on the issues with data representation
+# with small sample sizes and better ways on how to present data using paired
+# and/or continuous datasets
+
+# use the mpg dataset
+require(tidyverse)
+
+mpg
+
+# create factor levels by car type to make plotting easier
+mpg_fact <- mpg %>%
+  mutate(class = factor(class, levels = c("2seater","subcompact","compact",
+                                          "midsize","minivan","pickup","suv")))
+
+# view the new factor
+glimpse(mpg_fact)
+
+# make a traditional bar plot of the means and standard error
+p1 <- ggplot(mpg_fact, aes(x = class, y = hwy)) +
+  stat_summary(fun = mean, geom = "col", width = 0.5, color = "red", fill = "white")+
+  stat_summary(geom = "errorbar", width = 0.3) + # by default, geom_errorbar will calculate a mean and stderr
+  ylim(0,45) +
+  coord_flip()
+
+# view the plot
+p1
+
+# explore some other options for presenting the data
+# create a boxplot to see what other information we can get from the data
+p2 <- ggplot(mpg_fact, aes(class, hwy)) +
+  geom_boxplot(color = "red") +
+  ylim(0,45) +
+  coord_flip()
+
+# view the data
+p2
+
+# gives quartile ranges, but doesn't tell us how the points are distributed
+
+# create a violin plot to vview the density of the data
+p3 <- ggplot(mpg_fact, aes(class, hwy)) +
+  geom_violin(draw_quantiles = c(0.25,0.5,0.75)) +
+  stat_summary(fn = mean, geom = "crossbar", width = 0.4, color = "red") + # add the mean to the plots
+  ylim(0,45) +
+  coord_flip()
+
+# view the violin plot
+p3
+
+# show all the data points; geom_point overlaps points, so you can't see the sample size
+p4 <- ggplot(mpg_fact, aes(class, hwy)) +
+  geom_point() +
+  ylim(0,45) +
+  coord_flip()
+
+p4
+
+# show all the datapoints with geom_jitter
+p5 <- ggplot(mpg_fact, aes(class, hwy)) +
+  geom_jitter(width = 0.3, alpha = 0.4, size = 1.6) + # alpha makes the points transparent; scatters the points so they're not all overlapping
+  ylim(0,45) +
+  coord_flip()
+
+p5
+
+# add error bars
+p6 <- ggplot(mpg_fact, aes(class, hwy)) +
+  geom_jitter(width = 0.3, alpha = 0.4, size = 1.6) +
+  stat_summary(fn = mean, geom = "crossbar", width = 0.4, color = "red") +
+  stat_summary(geom = "errorbar", width = 0.3) +
+  ylim(0,45) +
+  coord_flip()
+
+p6
+
+# put the different graphs together with patchwork
+require(patchwork)
+
+# create a patchwork figure group
+(p1 + p2)/(p3 + p6)
+
+# plot points and violin in same plot
+p7 <- ggplot(mpg_fact, aes(class, hwy)) +
+  geom_violin(position = position_nudge(x = 0.5, y = 0), draw_quantiles = c(0.25,0.5,0.75), width = 0.4) +
+  geom_jitter(width = 0.3, alpha = 0.4, size = 1.6) +
+  stat_summary(fn = mean, geom = "crossbar", width = 0.4, color = "red") +
+  stat_summary(geom = "errorbar", width = 0.3) +
+  ylim(0,45) +
+  coord_flip()
+
+p7
+
+# paired or repeated observations; data points need to be linked since they're measures of the same thing, but over different time scales or other measure
+# generate the paired observation data from the online vingette
+ID<-c("A","B","C","D","E","F","G","A","B","C","D","E","F","G")
+Obs<-c("before","before","before","before","before","before","before","after","after","after","after","after","after","after")
+Measure<-c(runif(1:7),runif(1:7)*4)
+
+RepEx<-tibble(ID,Obs,Measure) #make these observations into a tibble
+
+RepEx<-RepEx %>% 
+  mutate(Obs = factor(Obs, levels = c("before","after"))) #order the levels of observation as a factor
+
+# make another plot 
+p8 <- ggplot(RepEx, aes(Obs, Measure)) +
+  geom_point(alpha = 0.4, size = 4, aes(color = ID)) +
+  geom_line(aes(color = ID, group = ID), alpha = 0.4, size = 2)
+
+p8
+
+# example of BAD DATA REPRESENTATION
+# create a bar plot of this data
+p9 <- ggplot(RepEx, aes(x = Obs, y = Measure)) +
+  stat_summary(fun = mean, geom = "col", width = 0.5, color = "red", fill = "white")+
+  stat_summary(geom = "errorbar", width = 0.3)
+
+p9
+
+# this bar plot doesn't tell you about the relationship between before and after measures
+
+## NOTE: use theme_set(<theme>) to change the default the theme
