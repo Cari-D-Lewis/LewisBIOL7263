@@ -73,19 +73,24 @@ summarise(Matt_ebird_RWBB, state_total=sum(count_tot))
 # create a new dataset by filtering observations for duration between 5-200 minutes
 Matt_ebird_duration <- filter(Matt_ebird, duration > 5 & duration < 200)
 
-# group by species
+# group by list_ID (which I think is "checklist")
 Matt_ebird_duration <- group_by(Matt_ebird_duration, list_ID)
 
 # create a new variable `rate` for each list_ID
-Matt_ebird_duration <- mutate(Matt_ebird_duration, rate=(count/duration))
+Matt_ebird_duration <- mutate(Matt_ebird_duration, rate = (count/duration))
 
-# calculate the mean rate for each list_ID
+# ungroup and group by year
+ungroup(Matt_ebird_duration)
+
+Matt_ebird_duration <- group_by(Matt_ebird_duration, year)
+
+# calculate the mean rate of species encountered by year
 summarise(Matt_ebird_duration, mean_rate=mean(rate))
 ```
 
 ### 5. Create a tibble that includes the complete observations for the top 10 most frequently observed species. First generate a top 10 list and then use this list to filter all observations. Export this tibble as a `.csv` file saved to a folder called “Results” folder within your R project and add link to the markdown document.  
   
-```{R}
+```{R, eval = FALSE}
 # group by species
 Matt_ebird <- group_by(Matt_ebird, scientific_name)
 
@@ -93,21 +98,28 @@ Matt_ebird <- group_by(Matt_ebird, scientific_name)
 ebird_top_10 <- head(arrange(summarise(Matt_ebird, freq=sum(count)), by = desc(freq)),10)
 
 # filter the original dataset using the top 10 list
-write_csv(filter(Matt_ebird, 
-                 scientific_name == ebird_top_10[1,1] &
-                   scientific_name == ebird_top_10[2,1] &
-                   scientific_name == ebird_top_10[3,1] &
-                   scientific_name == ebird_top_10[4,1] &
-                   scientific_name == ebird_top_10[5,1] &
-                   scientific_name == ebird_top_10[6,1] &
-                   scientific_name == ebird_top_10[7,1] &
-                   scientific_name == ebird_top_10[8,1] &
-                   scientific_name == ebird_top_10[9,1] &
-                   scientific_name == ebird_top_10[10,1]),
-          "ebird_top10.csv")
+F1 <- filter(Matt_ebird, scientific_name == ebird_top_10[1,1])
+F2 <- filter(Matt_ebird, scientific_name == ebird_top_10[2,1])
+F3 <- filter(Matt_ebird, scientific_name == ebird_top_10[3,1])
+F4 <- filter(Matt_ebird, scientific_name == ebird_top_10[4,1])
+F5 <- filter(Matt_ebird, scientific_name == ebird_top_10[5,1])
+F6 <- filter(Matt_ebird, scientific_name == ebird_top_10[6,1])
+F7 <- filter(Matt_ebird, scientific_name == ebird_top_10[7,1])
+F8 <- filter(Matt_ebird, scientific_name == ebird_top_10[8,1])
+F9 <- filter(Matt_ebird, scientific_name == ebird_top_10[9,1])
+F10 <- filter(Matt_ebird, scientific_name == ebird_top_10[10,1])
 
-# 
-
+# merge all the top ten datasets into a 'csv' saved in the Results folder
+write_csv(full_join(F1, 
+                    full_join(F2, 
+                              full_join(F3, 
+                                        full_join(F4, 
+                                                  full_join(F5, 
+                                                            full_join(F6, 
+                                                                      full_join(F7, 
+                                                                                full_join(F8, 
+                                                                                          full_join(F9, F10))))))))), 
+          "Results/ebird_top10.csv")
 ```
   
-  
+### Click [Top_10_Bird_Obs](Results/ebird_top10.csv) to download the output `.csv` file.  

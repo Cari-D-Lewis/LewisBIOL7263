@@ -11,7 +11,7 @@
 
 <meta name="author" content="Cari Lewis" />
 
-<meta name="date" content="2022-09-28" />
+<meta name="date" content="2022-10-13" />
 
 <title>Assignment4</title>
 
@@ -467,7 +467,7 @@ pre code {
 
 <h1 class="title toc-ignore">Assignment4</h1>
 <h4 class="author">Cari Lewis</h4>
-<h4 class="date">2022-09-28</h4>
+<h4 class="date">2022-10-13</h4>
 
 </div>
 
@@ -588,7 +588,7 @@ Blackbirds?</h3>
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>Matt_ebird_RWBB <span class="ot">&lt;-</span><span class="fu">group_by</span>(Matt_ebird_RWBB, location)</span>
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co"># summarize the data by location</span></span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="fu">summarize</span>(Matt_ebird_RWBB, <span class="at">state_total=</span><span class="fu">sum</span>(count_tot))</span></code></pre></div>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="fu">summarise</span>(Matt_ebird_RWBB, <span class="at">state_total=</span><span class="fu">sum</span>(count_tot))</span></code></pre></div>
 <pre><code>## # A tibble: 5 × 2
 ##   location state_total
 ##   &lt;chr&gt;          &lt;dbl&gt;
@@ -609,39 +609,51 @@ divided by duration and then take the mean for the year.</h3>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create a new dataset by filtering observations for duration between 5-200 minutes</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>Matt_ebird_duration <span class="ot">&lt;-</span> <span class="fu">filter</span>(Matt_ebird, duration <span class="sc">&gt;</span> <span class="dv">5</span> <span class="sc">&amp;</span> duration <span class="sc">&lt;</span> <span class="dv">200</span>)</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co"># group by species</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co"># group by list_ID (which I think is &quot;checklist&quot;)</span></span>
 <span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>Matt_ebird_duration <span class="ot">&lt;-</span> <span class="fu">group_by</span>(Matt_ebird_duration, list_ID)</span>
 <span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co"># create a new variable count for each species</span></span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>Matt_ebird_duration <span class="ot">&lt;-</span> <span class="fu">mutate</span>(Matt_ebird_duration, <span class="at">species_num=</span><span class="fu">c</span>(<span class="fu">unique</span>(scientific_name)))</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co"># create a new variable `rate` for each list_ID</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>Matt_ebird_duration <span class="ot">&lt;-</span> <span class="fu">mutate</span>(Matt_ebird_duration, <span class="at">rate =</span> (count<span class="sc">/</span>duration))</span>
 <span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="co"># ungroup by species and regroup by year</span></span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="co">#ungroup(Matt_ebird_duration)</span></span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="co">#Matt_ebird_duration &lt;- group_by(Matt_ebird_duration, list_ID)</span></span>
-<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a><span class="co">#summary(Matt_ebird_duration, species=count(scientific_name))</span></span>
-<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a><span class="co"># create a new variable </span></span>
-<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(Matt_ebird_duration)</span></code></pre></div>
-<pre><code>## Rows: 5,824
-## Columns: 15
-## Groups: list_ID [353]
-## $ ...1            &lt;dbl&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15, 16, 17,…
-## $ list_ID         &lt;chr&gt; &quot;S40748758&quot;, &quot;S33616660&quot;, &quot;S33809874&quot;, &quot;S35533959&quot;, &quot;S…
-## $ common_name     &lt;chr&gt; &quot;Snow Goose&quot;, &quot;Snow Goose&quot;, &quot;Snow Goose&quot;, &quot;Snow Goose&quot;…
-## $ scientific_name &lt;chr&gt; &quot;Anser caerulescens&quot;, &quot;Anser caerulescens&quot;, &quot;Anser cae…
-## $ date            &lt;date&gt; 2017-11-26, 2017-01-12, 2017-01-20, 2017-03-30, 2017-…
-## $ time            &lt;time&gt; 10:28:00, 07:00:00, 16:26:00, 07:05:00, 07:00:00, 18:…
-## $ count           &lt;dbl&gt; 16, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 30, 6, 31, 6, …
-## $ duration        &lt;dbl&gt; 20, 90, 59, 100, 127, 68, 109, 98, 173, 45, 118, 85, 1…
-## $ location        &lt;chr&gt; &quot;US-MO&quot;, &quot;US-MO&quot;, &quot;US-MO&quot;, &quot;US-MO&quot;, &quot;US-MO&quot;, &quot;US-MO&quot;, …
-## $ latitude        &lt;dbl&gt; 38.87193, 38.63891, 38.63891, 38.63891, 38.63891, 38.6…
-## $ longitude       &lt;dbl&gt; -90.18439, -90.28538, -90.28538, -90.28538, -90.28538,…
-## $ count_tot       &lt;dbl&gt; 369, 272, 188, 283, 369, 28, 247, 237, 137, 114, 108, …
-## $ month           &lt;dbl&gt; 11, 1, 1, 3, 4, 4, 4, 4, 4, 5, 6, 8, 1, 12, 11, 11, 3,…
-## $ year            &lt;dbl&gt; 2017, 2017, 2017, 2017, 2017, 2017, 2017, 2017, 2017, …
-## $ species_num     &lt;chr&gt; &quot;Anser caerulescens&quot;, &quot;Anser caerulescens&quot;, &quot;Anser cae…</code></pre>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="co"># ungroup and group by year</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="fu">ungroup</span>(Matt_ebird_duration)</span></code></pre></div>
+<pre><code>## # A tibble: 5,824 × 15
+##     ...1 list_ID  commo…¹ scien…² date       time  count durat…³ locat…⁴ latit…⁵
+##    &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;   &lt;chr&gt;   &lt;date&gt;     &lt;tim&gt; &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt;
+##  1     1 S407487… Snow G… Anser … 2017-11-26 10:28    16      20 US-MO      38.9
+##  2     2 S336166… Snow G… Anser … 2017-01-12 07:00     1      90 US-MO      38.6
+##  3     3 S338098… Snow G… Anser … 2017-01-20 16:26     1      59 US-MO      38.6
+##  4     4 S355339… Snow G… Anser … 2017-03-30 07:05     1     100 US-MO      38.6
+##  5     5 S356980… Snow G… Anser … 2017-04-04 07:00     1     127 US-MO      38.6
+##  6     6 S358612… Snow G… Anser … 2017-04-10 18:06     1      68 US-MO      38.6
+##  7     7 S359184… Snow G… Anser … 2017-04-13 06:59     1     109 US-MO      38.6
+##  8     8 S361181… Snow G… Anser … 2017-04-20 07:00     1      98 US-MO      38.6
+##  9     9 S361989… Snow G… Anser … 2017-04-23 08:13     1     173 US-MO      38.6
+## 10    10 S368405… Snow G… Anser … 2017-05-13 18:00     1      45 US-MO      38.6
+## # … with 5,814 more rows, 5 more variables: longitude &lt;dbl&gt;, count_tot &lt;dbl&gt;,
+## #   month &lt;dbl&gt;, year &lt;dbl&gt;, rate &lt;dbl&gt;, and abbreviated variable names
+## #   ¹​common_name, ²​scientific_name, ³​duration, ⁴​location, ⁵​latitude
+## # ℹ Use `print(n = ...)` to see more rows, and `colnames()` to see all variable names</code></pre>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>Matt_ebird_duration <span class="ot">&lt;-</span> <span class="fu">group_by</span>(Matt_ebird_duration, year)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate the mean rate of species encountered by year</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summarise</span>(Matt_ebird_duration, <span class="at">mean_rate=</span><span class="fu">mean</span>(rate))</span></code></pre></div>
+<pre><code>## # A tibble: 13 × 2
+##     year mean_rate
+##    &lt;dbl&gt;     &lt;dbl&gt;
+##  1  2003    0.0185
+##  2  2004    0.0771
+##  3  2009    0.0521
+##  4  2013    0.0390
+##  5  2014    0.0978
+##  6  2015    0.0842
+##  7  2016    0.0483
+##  8  2017    0.0847
+##  9  2018    0.0595
+## 10  2019    0.0311
+## 11  2020    0.542 
+## 12  2021    0.0782
+## 13  2022    0.218</code></pre>
 </div>
 <div id="create-a-tibble-that-includes-the-complete-observations-for-the-top-10-most-frequently-observed-species.-first-generate-a-top-10-list-and-then-use-this-list-to-filter-all-observations.-export-this-tibble-as-a-.csv-file-saved-to-a-folder-called-results-folder-within-your-r-project-and-add-link-to-the-markdown-document." class="section level3">
 <h3>5. Create a tibble that includes the complete observations for the
@@ -649,6 +661,39 @@ top 10 most frequently observed species. First generate a top 10 list
 and then use this list to filter all observations. Export this tibble as
 a <code>.csv</code> file saved to a folder called “Results” folder
 within your R project and add link to the markdown document.</h3>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># group by species</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>Matt_ebird <span class="ot">&lt;-</span> <span class="fu">group_by</span>(Matt_ebird, scientific_name)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="co"># create a top 10 list</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>ebird_top_10 <span class="ot">&lt;-</span> <span class="fu">head</span>(<span class="fu">arrange</span>(<span class="fu">summarise</span>(Matt_ebird, <span class="at">freq=</span><span class="fu">sum</span>(count)), <span class="at">by =</span> <span class="fu">desc</span>(freq)),<span class="dv">10</span>)</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="co"># filter the original dataset using the top 10 list</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>F1 <span class="ot">&lt;-</span> <span class="fu">filter</span>(Matt_ebird, scientific_name <span class="sc">==</span> ebird_top_10[<span class="dv">1</span>,<span class="dv">1</span>])</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>F2 <span class="ot">&lt;-</span> <span class="fu">filter</span>(Matt_ebird, scientific_name <span class="sc">==</span> ebird_top_10[<span class="dv">2</span>,<span class="dv">1</span>])</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>F3 <span class="ot">&lt;-</span> <span class="fu">filter</span>(Matt_ebird, scientific_name <span class="sc">==</span> ebird_top_10[<span class="dv">3</span>,<span class="dv">1</span>])</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>F4 <span class="ot">&lt;-</span> <span class="fu">filter</span>(Matt_ebird, scientific_name <span class="sc">==</span> ebird_top_10[<span class="dv">4</span>,<span class="dv">1</span>])</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>F5 <span class="ot">&lt;-</span> <span class="fu">filter</span>(Matt_ebird, scientific_name <span class="sc">==</span> ebird_top_10[<span class="dv">5</span>,<span class="dv">1</span>])</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>F6 <span class="ot">&lt;-</span> <span class="fu">filter</span>(Matt_ebird, scientific_name <span class="sc">==</span> ebird_top_10[<span class="dv">6</span>,<span class="dv">1</span>])</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>F7 <span class="ot">&lt;-</span> <span class="fu">filter</span>(Matt_ebird, scientific_name <span class="sc">==</span> ebird_top_10[<span class="dv">7</span>,<span class="dv">1</span>])</span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>F8 <span class="ot">&lt;-</span> <span class="fu">filter</span>(Matt_ebird, scientific_name <span class="sc">==</span> ebird_top_10[<span class="dv">8</span>,<span class="dv">1</span>])</span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>F9 <span class="ot">&lt;-</span> <span class="fu">filter</span>(Matt_ebird, scientific_name <span class="sc">==</span> ebird_top_10[<span class="dv">9</span>,<span class="dv">1</span>])</span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>F10 <span class="ot">&lt;-</span> <span class="fu">filter</span>(Matt_ebird, scientific_name <span class="sc">==</span> ebird_top_10[<span class="dv">10</span>,<span class="dv">1</span>])</span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a><span class="co"># merge all the top ten datasets into a &#39;csv&#39; saved in the Results folder</span></span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(<span class="fu">full_join</span>(F1, </span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">full_join</span>(F2, </span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>                              <span class="fu">full_join</span>(F3, </span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a>                                        <span class="fu">full_join</span>(F4, </span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a>                                                  <span class="fu">full_join</span>(F5, </span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a>                                                            <span class="fu">full_join</span>(F6, </span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a>                                                                      <span class="fu">full_join</span>(F7, </span>
+<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a>                                                                                <span class="fu">full_join</span>(F8, </span>
+<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a>                                                                                          <span class="fu">full_join</span>(F9, F10))))))))), </span>
+<span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a>          <span class="st">&quot;Results/ebird_top10.csv&quot;</span>)</span></code></pre></div>
+</div>
+<div id="click-top_10_bird_obs-to-download-the-output-.csv-file." class="section level3">
+<h3>Click <a href="Results/ebird_top10.csv">Top_10_Bird_Obs</a> to
+download the output <code>.csv</code> file.</h3>
 </div>
 </div>
 
