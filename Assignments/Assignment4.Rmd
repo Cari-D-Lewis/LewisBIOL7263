@@ -122,4 +122,4 @@ write_csv(full_join(F1,
           "Results/ebird_top10.csv")
 ```
   
-### Click [Top_10_Bird_Obs](Results/ebird_top10.csv) to download the output `.csv` file.  
+### *Click [Top_10_Bird_Obs](Results/ebird_top10.csv) to download the output `.csv` file.*  
