@@ -27,7 +27,7 @@ My expertise is in urban ecology and evolution in indoor urban pests. I currentl
 | Assignment 2 | [Assignment 2](index.html) | R Markdown, Portfolio Building  
 | Assignment 3 | [Assignment 3](Assignments/Assignment3.html) | Regular Expressions  
 | Assignment 4 | [Assignment 4](Assignments/Assignment4.html) | Using `dplyr` for Data Management  
-| Assignment 5 | [Assignment 5](Assignments/Assignment5.html) | Using `tidyr` for Data Management  
+| Assignment 5 | [Assignment 5](Assignments/Assignment5.html) | Merging and Comparing Data  
 | Assignment 6 | [Assignment 6](Assignments/Assignment6.html) | Using `ggplot` to Visualize Data  
 
 
