@@ -384,7 +384,7 @@ table2
 
 table2 %>%
   pivot_wider(names_from = type, # use names_from to pull names from a character list
-              values_from = count) ## NOTE: variable names are not in "" becuase they're existing variables
+              values_from = count) ## NOTE: variable names are not in "" because they're existing variables
 
 ##### using separate
 # separating variables
