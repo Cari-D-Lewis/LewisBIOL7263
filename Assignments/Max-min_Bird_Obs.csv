@@ -1,0 +1,7 @@
+...1,list_ID,common_name,scientific_name,date,time,count,duration,location,latitude,longitude,count_tot,month,year
+14,S82037948,Snow Goose,Anser caerulescens,2021-02-20,17:15:00,26,4,US-OK,35.9664503,-95.4937384,696,2,2021
+2,S33616660,Snow Goose,Anser caerulescens,2017-01-12,07:00:00,1,90,US-MO,38.6389068,-90.2853806,272,1,2017
+872,S1665531,Chuck-will's-widow,Antrostomus carolinensis,2004-04-22,NA,1,0,US-FL,27.1818195,-81.358746,15,4,2004
+872,S1665531,Chuck-will's-widow,Antrostomus carolinensis,2004-04-22,NA,1,0,US-FL,27.1818195,-81.358746,15,4,2004
+5995,S18948766,Northern Parula,Setophaga americana,2014-06-29,11:00:00,6,360,US-MO,37.7291811,-92.3933029,101,6,2014
+5979,S67802026,Northern Parula,Setophaga americana,2020-04-25,11:48:00,1,140,US-OK,36.783717,-98.18573,64,4,2020

@@ -1,0 +1,215 @@
+---
+title: "Automation with Functions in R"
+author: "Cari Lewis"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    theme: yeti
+    highlight: tango
+    df_print: tibble
+---
+
+### **Functions in R** 
+ 
+#### A **function** is a set of statements organized together to perform a specific task. R has a large number of in-built functions and the user can create their own functions.
+ 
+#### In R, a function is an object so the R interpreter is able to pass control to the function, along with arguments that may be necessary for the function to accomplish the actions.
+ 
+#### The function in turn performs its task and returns control to the interpreter as well as any result which may be stored in other objects.
+ 
+### **Function Components** 
+ 
+#### The different parts of a function are:
+
+##### **Function Name** − This is the actual name of the function. It is stored in R environment as an object with this name. 
+ 
+##### **Arguments** − An argument is a placeholder. When a function is invoked, you pass a value to the argument. Arguments are optional; that is, a function may contain no arguments. Also arguments can have default values. 
+ 
+##### **Function Body** − The function body contains a collection of statements that defines what the function does. 
+
+##### **Return Value** − The return value of a function is the last expression in the function body to be evaluated. 
+
+```
+## The syntax of creating functions
+new_function_name <- function(arguments){
+  FUNCTION_BODY
+  everything_you_want_the_function_to_do_to arguments
+}
+```
+
+#### R has many in-built functions which can be directly called in the program without defining them first. We can also create and use our own functions referred as user defined functions. 
+ 
+### **Built-in versus User-defined Functions** 
+ 
+#### Simple examples of **built-in functions** are `seq()`, `mean()`, `max()`, `sum(x)` and `paste(...)` etc. They are directly called by user written programs and installed with R packages. 
+ 
+#### We can create **user-defined functions** in R that are specific to what a user wants and once created they can be used like the built-in functions. 
+
+#### The **rule of thumb** is *if* you have to copy and paste code more than twice, it's quicker and cleaner to write a function. 
+
+### **Creating User-defined Functions** 
+ 
+```{r}
+# load the tidyverse
+library(tidyverse)
+
+# create a function that takes a name input and prints it to the stdout
+my_function <- function(my_name){
+  print(paste0("My name is ", my_name))
+}
+
+# call the function
+my_function("Cari")
+```
+ 
+### **Multiple Variables in Functions** 
+ 
+##### You can also write functions that take multiple input variables to complete needed tasks, with the general layout below:
+```
+# the syntax of using multiple variables in a function
+new_function_name <- function(x, y){
+  everything_you_want_the_function_to_do_to x
+  additional_things_to_do_to y
+  x + y
+  etc.
+}
+```
+ 
+##### The example below demonstrates how to write a function with multiple variables and syntax specific to calling the variables. 
+ 
+```{R}
+pow <- function(x, y) {
+  # function to print x raised to the power y
+  result <- x^y
+  print(paste(x,"raised to the power", y, "is", result))
+}
+```
+ 
+##### The arguments can be unnamed and follows the order listed in the function argument order: 
+```{R}
+# unnamed arguments
+pow(8, 2)
+```
+ 
+##### The arguments can be named, in which case order doesn't matter: 
+```{R}
+# named arguments
+pow(y = 2, x = 8)
+```
+ 
+##### Lastly, the arguments can be mixed: 
+```{R}
+# mixed named/unnamed arguments
+pow(2, x = 8)
+```
+
+### **A More Complex Example** 
+ 
+##### Using the mpg dataset from the tidyverse package, write a function that will take a manufacturer, model, and year of car and calculate the average mpg.
+ 
+```{R}
+# write the function in pieces
+avg_mpg <- function(MANU, MODEL, YEAR){ # identify the variables
+  man <- filter(mpg, manufacturer == MANU) # isolate by manufacturer
+  mod <- filter(man, model == MODEL) # isolate by model
+  year <- filter(mod, year == YEAR) # isolate by year
+  year <- mutate(year, avgmpg = ((cty+hwy)/2)) # add a new column with the average mpg
+  return(year)
+}
+
+# test your function and find the average mpg for the 2019 audi a4
+avg_mpg("audi","a4","1999")
+
+
+# use your function to find the average mpg for the 2008 toyota camry
+avg_mpg("toyota", "camry", "2008")
+
+```
+ 
+### **Homework Problems** 
+ 
+#### **Problem 1** 
+ 
+##### Using the [ebird](https://github.com/mbtoomey/Biol_7263/blob/main/Data/MBT_ebird.csv?raw=true) dataset from previous lessons, write a function that will take the scientific name as input and create a new file containing all the observation info for that bird. Name the output files with the scientific names for the following species:
+ 
+| **Scientific Name** 
+| :---: 
+| *Anser caerulescens* 
+| *Antrostomus carolinensis* 
+| *Setophaga americana* 
+ 
+##### Your output should look something like this:
+```{R, echo=F, results=F, message=F}
+# download the ebird data set
+Matt_ebird <- read_csv("https://github.com/mbtoomey/Biol_7263/blob/main/Data/MBT_ebird.csv?raw=true")
+```
+
+```{R echo=F}
+# write the function sections
+bird <- function(BIRD){ # define the input argument
+  b <- filter(Matt_ebird, scientific_name == BIRD) # create the body of the function
+  file_name <- paste0(sub(" ", "_", BIRD),".csv") # create the file name variable
+  write_csv(b, file_name) # write the output csv file
+  cat("File", file_name,"created.") # confirm the function output the final list
+  head(b)
+} # close the function
+
+# use the function for each bird species
+bird("Anser caerulescens")
+
+bird("Antrostomus carolinensis")
+
+bird("Setophaga americana")
+```
+ 
+#### **Problem 2** 
+ 
+##### Write a second function that will take a file name as input and output the data when that species was observed the **most** AND the **least** for each of the files created in Problem 1. Save the output into a single file in your results folder and include the link in your R Markdown file. 
+ 
+```{R, echo=F, message=F}
+# create the output file with headers
+write_csv(head(Matt_ebird,0), "Max-min_Bird_Obs.csv", col_names = TRUE)
+
+# create the function and body
+max_minOb <- function(FILE_NAME){ # input a csv file
+  bird <- read_csv(FILE_NAME) # read the csv to a new variable
+  bird_list <- head(arrange(bird, by = desc(count)),1)
+  bird_list <- rbind(bird_list, head(arrange(bird, by = count),1))
+  write_csv(bird_list, "Max-min_Bird_Obs.csv", col_names = F, append = TRUE)
+}
+
+# use the function for each bird species
+max_minOb("Anser_caerulescens.csv")
+
+max_minOb("Antrostomus_carolinensis.csv")
+
+max_minOb("Setophaga_americana.csv")
+
+```
+ 
+##### Your ouput file should look like this: 
+ 
+```{R echo=F}
+# provide an example of the output
+output <- read.csv("Max-min_Bird_Obs.csv")
+
+print(output)
+```
+
+#### **Problem 3** 
+ 
+##### Write a nested function that will complete Problems 1 and 2 in a single function, but with the following species names as argument values:
+ 
+| **Scientific Name** 
+| :---: 
+| *Branta canadensis* 
+| *Spatula discors* 
+| *Anas platyrhynchos* 
+ 
+##### Save your output file in your Results folder and include a link in your R Markdown file.
+ 
+#### **Challenge Problem!**
+##### Write a loop that uses your function from Problem 3 and a list of bird names to completely automate the process! 
+ 
+ 
+###### This lesson written using online resources [here](https://www.tutorialspoint.com/r/r_functions.htm) and previous lessons. My R script with the homework solutions (although there are multiple ways to complete them) can be found [here](../Automation_Functions-10-Nov-22.R).

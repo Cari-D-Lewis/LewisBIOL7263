@@ -17,7 +17,7 @@ output:
 # **Research Interests**  
 ![](Assignments/ASP1-F1_Bed_Bug.jpg)
   
-My expertise is in urban ecology and evolution in indoor urban pests. I currently use bed bugs (*Cimex lectularius*) as a model organism to study parasite-host relationships at multiple geographic scales. As a species with a close-association to us---humans---they provide a unique opportunity to study how host organisms impact parasite ecology and evolution with an applied importance to human health and well-being. I'm completing my Ph.D. in the [Booth Lab](https://www.booth-lab.org) and currently looking for a post-doc or industry position in Computational Genetics or related fields.
+My expertise is in urban ecology and evolution in indoor urban pests. I currently use bed bugs (*Cimex lectularius*) as a model organism to study parasite-host relationships at multiple geographic scales. As a species with a close-association to us---humans---they provide a unique opportunity to study how host organisms impact parasite ecology and evolution with an applied importance to human health and well-being. I'm completing my Ph.D. in the [Booth Lab](https://www.booth-lab.org) and am currently looking for a post-doc or industry position in Computational Genetics or related field.
 
 # **BIOL7263 Assignments**
 
@@ -29,6 +29,10 @@ My expertise is in urban ecology and evolution in indoor urban pests. I currentl
 | Assignment 4 | [Assignment 4](Assignments/Assignment4.html) | Using `dplyr` for Data Management  
 | Assignment 5 | [Assignment 5](Assignments/Assignment5.html) | Merging and Comparing Data  
 | Assignment 6 | [Assignment 6](Assignments/Assignment6.html) | Using `ggplot` to Visualize Data  
+| Assignment 7 | [Assignment 7](Assignments/Assignment7.html) | GIS in R 
+| Student Lessons Oct-24-22 | [AcuityView](Assignments/AcuityView.html) and [Loops](Assignments/Loops.html) | Using R package AcuityView and creating loops 
+| Student Lessons Oct-31-22 | [AIC]() and [PCA]() | AIC and PCAs in R 
+| My Lesson 10-Nov-22 | [Automation with Functions](Assignments/Functions_R.html) | Demonstrates the basic syntax of creating functions and the utility of user-defined functions 
 
 
 

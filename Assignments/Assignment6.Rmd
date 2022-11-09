@@ -1,0 +1,42 @@
+---
+title: "Assignment 6"
+author: "Cari Lewis"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    theme: yeti
+    highlight: tango
+    df_print: tibble
+---
+  
+### 1. Using the ebird data set, calculate the total number of species seen each month of each year in each location. Then plot the number of species seen each month with the color of the points indicating year and facet this plot by location.  
+
+```{R}
+require(tidyverse)
+
+# import the ebird data set from the Data folder
+ebird <- read_csv("../Data/MBT_ebird.csv")
+
+# calculate the total number of species seen each month
+glimpse(ebird)
+
+# Create a count variable for the number of species seen in each month
+```
+  
+### 2. Plot a comparison of mass by treatment including the individual observations, the mean, and standard error of the mean. Use point color or shape to indicate the sex.  
+  
+```{R}
+
+```
+  
+### 3. Generate a scatter plot of age and mass, indicate treatment with point shape or color, and fit separate regression lines (without CI) to each treatment.  
+  
+```{R}
+
+```
+  
+### 4. Combine the plots from 2 and 3 using patchwork tag each panel with and number or letter and include a title for the overall plot.  
+  
+```{R}
+
+```
