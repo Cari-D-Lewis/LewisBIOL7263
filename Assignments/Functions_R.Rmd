@@ -49,7 +49,7 @@ new_function_name <- function(arguments){
 
 ### **Creating User-defined Functions** 
  
-```{r}
+```{r, message=F}
 # load the tidyverse
 library(tidyverse)
 
