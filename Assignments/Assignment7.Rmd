@@ -8,4 +8,136 @@ output:
     highlight: tango
     df_print: tibble
 ---
+# GIS in R 
+
+```{R, message=F}
+# install the needed packages
+#install.packages(c("sp","rgdal","raster","rgeos","geosphere","dismo"))
+
+# load the libraries
+library(sp) # classes for vector data (polygons, points, lines)
+library(rgdal) # basic operations for spatial data
+library(raster) # handles rasters
+library(rgeos) # methods for vector files
+library(geosphere) # more methods for vector files
+library(dismo) # species distribution modeling tools
+
+# set the working directory
+setwd("/Users/carilewis/Desktop/Dissertation/Bioinformatics/Data_Wrangling/LewisBIOL7263/Assignments/")
+```
+ 
+### 1. Present a map of your climate niche with your selected locations highlighted. 
+ 
+```{R, message=F}
+# create the stacks
+clim_stack <- stack(list.files("GIS_Lesson/WORLDCLIM_Rasters/", full.names = TRUE, pattern = ".tif"))
+
+# create a climate stack of 3 layers
+my_clim_stack <- stack(
+  raster('GIS_Lesson/WORLDCLIM_Rasters/wc2.1_10m_bio_2.tif'),
+  raster('GIS_Lesson/WORLDCLIM_Rasters/wc2.1_10m_bio_4.tif'),
+  raster('GIS_Lesson/WORLDCLIM_Rasters/wc2.1_10m_bio_17.tif')
+)
+
+# name the 3 layers based on the website
+names(my_clim_stack) <- c("mean_diurnal_range", "temperature_seasonality", "precip_driest_quarter")
+
+# map points and countries
+countries <- shapefile("GIS_Lesson/Country_Shapefiles/ne_10m_admin_0_countries.shp")
+
+# INSTEAD of using the interactive map (because my computer keeps crashing) I created two lists of lat/long data
+latitude <- as.numeric(c(61.168242, 49.424353, 47.656614, 39.833776, 44.554496, 39.643866, 51.520097, 52.293428, -31.671278))
+longitude <- as.numeric(c(-149.427963, -123.111125, -123.584073, -120.894137, -110.630757, -6.026834, -0.440544, 5.151720, 152.338739))
+
+# bind the data together
+my_sites <- as.data.frame(cbind(longitude,latitude))
+
+# now extract the climate values for each point
+env <- as.data.frame(extract(my_clim_stack, my_sites))
+
+# join environmental data and your site data
+my_sites <- cbind(my_sites, env)
+
+myCrs <- projection(my_clim_stack) # get projection info
+
+# create a new points file
+my_sites_shape <- SpatialPointsDataFrame(coords=my_sites, data=my_sites, proj4string=CRS(myCrs))
+
+# add a column to countries data frame with a unique number
+countries$id <- 1:nrow(countries)
+
+# see which countries points fall into
+my_countries <- over(my_sites_shape, countries)
+
+my_countries <- countries[countries$id %in% my_countries$id, ] #select my countries from the country shape file by id #
+
+# convert shapefile to raster
+my_countries_mask <- rasterize(my_countries, my_clim_stack[[2]])
+my_countries_mask <- my_countries_mask * 0 + 1 # make all values 1
+
+my_clim_sites <- my_clim_stack[[2]] * my_countries_mask
+#plot(my_clim_sites)
+#points(my_sites_shape, col='red', pch=16)
+
+bg <- as.data.frame(randomPoints(my_clim_stack, n=10000)) # 10,000 random sites
+names(bg) <- c('longitude', 'latitude')
+
+# extract environmental variables for the random points
+bgEnv <- as.data.frame(extract(my_clim_stack, bg))
+
+bg <- cbind(bg, bgEnv)
+
+# the model
+pres_bg <- c(rep(1, nrow(my_sites)), rep(0, nrow(bg)))
+
+train_data <- data.frame(pres_bg=pres_bg, rbind(my_sites, bg))
+
+my_model <- glm(pres_bg ~ mean_diurnal_range*temperature_seasonality*precip_driest_quarter + 
+                  I(mean_diurnal_range^2) + I(temperature_seasonality^2) + 
+                  I(precip_driest_quarter^2), data=train_data, family='binomial', 
+                weights=c(rep(1, nrow(my_sites)), rep(nrow(my_sites) / nrow(bg), nrow(bg))))
+
+my_world <- predict(
+  my_clim_stack,
+  my_model,
+  type='response'
+)
+
+# threshold your "preferred" climate with points highlighted
+my_world_thresh <- my_world >= quantile(my_world, 0.75)
+plot(my_world_thresh)
+points(my_sites_shape, col='red', pch=16)
+```
+ 
+# 2. Present a scatter plot of two of your selected variables for the world as a whole, your climate niche, and your selected points. 
+ 
+```{R}
+# convert all values not equal to 1 to NA...
+# using "calc" function to implement a custom function
+my_world_thresh <- calc(my_world_thresh, fun=function(x) ifelse(x==0 | is.na(x), NA, 1))
+
+# get random sites
+my_best_sites <- randomPoints(my_world_thresh, 10000)
+my_best_env <- as.data.frame(extract(my_clim_stack, my_best_sites))
+
+# plot world's climate
+smoothScatter(x=bgEnv$temperature_seasonality, y=bgEnv$precip_driest_quarter, col='lightblue')
+points(my_best_env$temperature_seasonality, my_best_env$precip_driest_quarter, col='red', pch=16, cex=0.2)
+points(my_sites$temperature_seasonality, my_sites$precip_driest_quarter, pch=16)
+legend(
+  'bottomright',
+  inset=0.01,
+  legend=c('world', 'my niche', 'my locations'),
+  pch=16,
+  col=c('lightblue', 'red', 'black'),
+  pt.cex=c(1, 0.4, 1)
+  
+)
+```
+ 
+# 3. Provide a link to the R script you used to calculate you climat eniche and generate the maps and plots. 
+ 
+##### Click [GIS_in_R.Rscript](GIS_Lesson/GIS_R_20-Oct-22.R) to download the .Rscript for this assignment. 
+ 
+ 
 
