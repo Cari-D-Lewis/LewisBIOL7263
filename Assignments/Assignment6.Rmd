@@ -100,7 +100,7 @@ ebird_tibble <- ebird_tibble %>%
   mutate(month = factor(month, levels = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")))
 ```
  
-```{R, message=F, eval = F}
+```{R}
 # plot the data with points colored by year and faceted by location
 p1 <- ggplot(data=ebird_tibble) + 
             aes(y=species_obs, x=month) +
@@ -109,8 +109,6 @@ p1 <- ggplot(data=ebird_tibble) +
 p1 + facet_wrap(~location, scales = "free_y", drop = T) +
   theme(axis.text.x = element_text(angle = 60))
 ```
-
-![](Assignments/Species_Year_Month.pdf)
   
 ### 2. Plot a comparison of mass by treatment including the individual observations, the mean, and standard error of the mean. Use point color or shape to indicate the sex.  
   
