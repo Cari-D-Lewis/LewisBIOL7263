@@ -30,7 +30,7 @@ My expertise is in urban ecology and evolution in indoor urban pests. I currentl
 | Assignment 5 | [Assignment 5](Assignments/Assignment5.html) | Merging and Comparing Data  
 | Assignment 6 | [Assignment 6](Assignments/Assignment6.html) | Using `ggplot` to Visualize Data  
 | Assignment 7 | [Assignment 7](Assignments/Assignment7.html) | GIS in R 
-| Student Lessons Oct-24-22 | [AcuityView](Assignments/AcuityView.html) and [Loops](Assignments/Loops.html) | Using R package AcuityView and creating loops 
+| Student Lessons Oct-24-22 | [Mierow seminar assignment](Assignments/AcuityView_in_R.html) and [Lesson Notes](Assignments/Lesson1_Loops_AcuityView_27-Oct-22.R) | Using R package AcuityView and creating loops 
 | Student Lessons Oct-31-22 | [AIC]() and [PCA]() | AIC and PCAs in R 
 | My Lesson 10-Nov-22 | [Automation with Functions](Assignments/Functions_R.html) | Demonstrates the basic syntax of creating functions and the utility of user-defined functions 
 | Student Lessons 10-Nov-22 | [rentrez](Assignments/rentrez_in_R.html) | Demonstrates how to search publication databases using rentrez
