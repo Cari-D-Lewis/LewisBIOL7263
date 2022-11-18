@@ -1,0 +1,166 @@
+---
+title: "Assignment 6"
+author: "Cari Lewis"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    theme: yeti
+    highlight: tango
+    df_print: tibble
+---
+  
+### 1. Using the ebird data set, calculate the total number of species seen each month of each year in each location. Then plot the number of species seen each month with the color of the points indicating year and facet this plot by location.  
+ 
+
+```{R, message = F}
+require(tidyverse)
+library(dplyr)
+
+# import the ebird data set from the Data folder
+ebird <- read_csv("../Data/MBT_ebird.csv")
+
+```
+
+```{R}
+# select the location, year, month, and count variables from the ebird dataset
+ebird_test <- as_tibble(select(ebird, location, year, month, count))
+
+# calculate the total number of species seen each month
+# create year, month, and location variables
+YEAR <- as.character(sort(unique(ebird$year)))
+MONTH <- as.numeric(sort(unique(ebird$month)))
+LOC <- as.character(sort(unique(ebird$location)))
+
+# create an empty tibble to hold the data
+ebird_tibble <- tibble(location = character(),
+                       year = character(),
+                       month = character(),
+                       species_obs = numeric(),
+)
+
+# create a counter to control the LOC, MONTH, and YEAR variables
+l=1
+m=1
+y=1
+
+# loop through each month, in each year, in each location and write the total observed birds to a new tibble
+while (l < (length(LOC)+1)) { # location loop that stops once it reaches the last location
+y=1 # restart the year counter
+  while (y < (length(YEAR)+1)) { # year loop where year starts over at 2023
+  m=1 # restart the month counter
+    while (m < (length(MONTH)+1)) { # month loop where month starts over at 13
+      obs <- filter(ebird_test, location == LOC[l] & year == YEAR[y] & month == MONTH[m]) # filter the selected data
+      species_obs <- sum(obs$count) # create the observation count variable
+      #print(species_obs) #confirn the loops are working
+      if (species_obs == 0) { ## IF the counts = 0
+        m=m+1 # increase the counter OTHERWISE IT CREATES AN INFINITE LOOP
+        next # skip to the next iteration
+      } # close the if condition loop
+      # change the month number to the corresponding character "Jan", "Dec", etc.
+      if (MONTH[m] > 1){
+        if (MONTH[m] > 2){
+          if (MONTH[m] > 3){
+            if (MONTH[m] > 4){
+              if (MONTH[m] > 5){
+                if (MONTH[m] > 6){
+                  if (MONTH[m] > 7){
+                    if (MONTH[m] > 8){
+                      if (MONTH[m] > 9){
+                        if (MONTH[m] > 10){
+                          if (MONTH[m] > 11){
+                            MON <- "Dec"
+                          } else {MON <- "Nov"}
+                        } else {MON <- "Oct"}
+                      } else {MON <- "Sep"}
+                    } else {MON <- "Aug"}
+                  } else {MON <- "Jul"}
+                } else {MON <- "Jun"}
+              } else {MON <- "May"}
+            } else {MON <- "Apr"}
+          } else {MON <- "Mar"}
+        } else {MON <- "Feb"}
+      } else {MON <- "Jan"}
+      # write each iteration as a new row in the tibble
+      ebird_tibble <- add_row(ebird_tibble, location = LOC[l], 
+                              month = as.character(MON), 
+                              year = YEAR[y], 
+                              species_obs = species_obs) # with ONLY nonzero values
+    m=m+1 # increase the month counter
+    } # close the month loop
+  y=y+1 # increase the year counter
+  } # close the year loop
+l=l+1 # increase the location counter
+} #close the location loop
+
+# view the first 15 lines of the data
+print(ebird_tibble, n=15)
+
+# order the months chronologically
+ebird_tibble <- ebird_tibble %>%
+  mutate(month = factor(month, levels = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")))
+```
+ 
+```{R, message=F, eval = F}
+# plot the data with points colored by year and faceted by location
+p1 <- ggplot(data=ebird_tibble) + 
+            aes(y=species_obs, x=month) +
+            geom_point(aes(color=year), size = 2)
+
+p1 + facet_wrap(~location, scales = "free_y", drop = T) +
+  theme(axis.text.x = element_text(angle = 60))
+```
+
+![](Assignments/Species_Year_Month.pdf)
+  
+### 2. Plot a comparison of mass by treatment including the individual observations, the mean, and standard error of the mean. Use point color or shape to indicate the sex.  
+  
+```{R, message=F}
+# require tidyverse
+require(tidyverse)
+
+# import the data from Assignment 5
+Assign5 <- read_csv("Results/Assign5_Merge.csv")
+
+glimpse(Assign5)
+```
+ 
+```{R}
+# create a boxplot comparing mass by treatment groups with color distinguishing sex
+p2 <- ggplot(data=Assign5) + 
+            aes(y=mass, x=Experiment, fill=Sex) +
+            geom_boxplot()
+
+p2
+```
+ 
+### 3. Generate a scatter plot of age and mass, indicate treatment with point shape or color, and fit separate regression lines (without CI) to each treatment.  
+  
+```{R}
+# create the scatter plot of age by mass with point color indicating treatment and regression lines
+p3 <- ggplot(data=Assign5) + 
+  aes(y=mass, x=age, color=Experiment) +
+  geom_point(size =2) +
+  geom_smooth(method="lm", se=F) # without CI
+
+p3
+```
+  
+### 4. Combine the plots from 2 and 3 using patchwork tag each panel with and number or letter and include a title for the overall plot.  
+  
+```{R}
+#install.packages("ggthemes")
+#install.packages("patchwork")
+library(ggplot2)
+library(ggthemes)
+library(patchwork)
+
+# combine the plots using patchwork
+p2 + p3 + plot_layout(ncol=1) +
+  plot_annotation(
+    title = 'Treatment Groups',
+    caption = 'made with patchwork',
+    theme = theme(plot.title = element_text(size = 16)),
+    tag_levels = 'a'
+  )
+
+```
