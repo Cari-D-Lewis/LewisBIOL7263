@@ -1,0 +1,67 @@
+---
+title: "rentrez in R"
+author: "Cari Lewis"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    theme: yeti
+    highlight: tango
+    df_print: tibble
+---
+ 
+# 'rentrez' Assignment 
+## 1. Create a search of a topic, organism, etc. 
+ 
+```{R}
+# load the necessary packages
+library(rentrez)
+library(tidyverse)
+library(ggplot2)
+library(glue)
+
+# create an object to hold the search information
+cl_search <- entrez_search(db = "pubmed", 
+                           term = "cimex lectularius[ORGN] and 2018:2022[PDAT]",
+                           retmax = 100)
+
+cl_search
+```
+ 
+## 2. Use the summary or fetch arguement to extract relevant information to your search. 
+```{R}
+# get the summary information
+cl_multi_sum <- entrez_summary(db= "pubmed", id = cl_search$ids)
+
+# extract elements from the summary using the 
+extract_from_esummary(cl_multi_sum,
+                      c("title","pubtype","pubdate","authors"),
+                      simplify = TRUE)
+
+
+```
+
+## 3. Create a plot to see how this topic has been reported on over a particular time span. 
+```{R}
+# create an object for searching in glue
+year <- 1950:2022
+clec_search <- glue("cimex lectularius[ORGN] AND {year}[PDAT]")
+
+# create a second search to compare change over time in publications
+
+search_counts <- tibble(year = year,
+                        clec_search = clec_search) %>%
+  mutate(C_lec = map_dbl(clec_search, ~entrez_search(db = "pubmed", 
+                                                    term = .x)$count))
+
+# plot the number of publications for AMV and tomato viruses from 1950 to 2022
+search_counts %>%
+  select(year, C_lec) %>%
+  pivot_longer(-year) %>%
+  ggplot(aes(x = year,
+             y = value,
+             group = name,
+             color = name))+
+  geom_line(size = 1)+
+  geom_smooth(color = "light blue")+
+  theme_bw()
+```

@@ -1,0 +1,83 @@
+---
+title: "Gene Expression Heatmap in R"
+author: "Cari Lewis"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    theme: yeti
+    highlight: tango
+    df_print: tibble
+---
+ 
+## 1. Create a heatmap using ggplot2 that is faceted by tissue type. 
+ 
+```{R}
+# load the necessary packages
+library(tidyverse)
+
+# download the assignment data
+expression <- read.csv("https://madisonherrboldt.github.io/HerrboldtBIOL7263/My_Lesson_Heatmaps/MAH_assignment_data.csv")
+
+# view the columns and data
+glimpse(expression)
+
+unique(expression$Tissue)
+
+# using the code from the in-class demonstration, create a heatmap
+ggplot(expression, aes(x = Sample, y = Gene, fill = Expression)) +
+  geom_tile(colour="black", linewidth=0.5)+ 
+  scale_fill_gradient(low = "black", high = "green")+
+  theme_grey(base_size=12)+
+  facet_grid(~ Tissue, switch = "x", scales = "free_x", space = "free_x") + #switch moves the facet labels to the bottom
+  #applying "free_x" removes the columns for which there is no data and
+  #applying "free_x" to space makes the columns the same width
+  ggtitle(label = "Pheromone Gene Expression") +
+  scale_x_discrete(labels=c(unique(expression$Sample)))+
+  theme(plot.title = element_text(face="bold"),
+        strip.placement = "outside", #this places the facet label outside the x axis labels
+        strip.text = element_text(face = "bold"), #this bolds the text in the facet label
+        legend.title = element_text(face = "bold"),
+        axis.title = element_text(face="bold"),
+        axis.title.x = element_blank(),
+        axis.text.y =element_text(color = "black"),
+        axis.text.x =element_text(color = "black"),
+        axis.ticks=element_blank(),
+        plot.background=element_blank(),
+        panel.background = element_blank(),
+        panel.border = element_blank())
+```
+ 
+## 2. Customize the heatmap with a title, color, and correct axis labels/titles that are legible. 
+  
+```{R}
+# using the code from the in-class demonstration, customize the heatmap
+ggplot(expression, aes(x = Sample, y = Gene, fill = Expression)) +
+  geom_tile(colour="black", linewidth=0.5)+ 
+  scale_fill_gradient(low = "black", high = "purple")+
+  theme_grey(base_size=12)+
+  facet_grid(~ Tissue, switch = "x", scales = "free_x", space = "free_x") + #switch moves the facet labels to the bottom
+  #applying "free_x" removes the columns for which there is no data and
+  #applying "free_x" to space makes the columns the same width
+  ggtitle(label = "Pheromone Gene Expression") +
+  scale_x_discrete(labels=c(unique(expression$Sample)))+
+  theme(plot.title = element_text(face="bold"),
+        strip.placement = "outside", #this places the facet label outside the x axis labels
+        strip.text = element_text(face = "bold"), #this bolds the text in the facet label
+        legend.title = element_text(face = "bold"),
+        axis.title = element_text(face="bold"),
+        axis.title.x = element_blank(),
+        axis.text.y = element_text(color = "black"),
+        axis.text.x =element_text(angle = 270, hjust = 0, color = "black"),
+        axis.ticks = element_blank(),
+        plot.background = element_blank(),
+        panel.background = element_blank(),
+        panel.border = element_blank())
+```
+ 
+ 
+## 3. Create an R Markdown file with a link to your script as well as an imbedded image of your heatmap. 
+ 
+#### Click [here](/Users/carilewis/Desktop/Dissertation/Bioinformatics/Data_Wrangling/LewisBIOL7263/Lesson5_Heatmaps_in_R.R) for the Heatmap Rscript.
+ 
+ 
+ 
